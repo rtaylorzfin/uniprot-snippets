@@ -18,19 +18,9 @@ $|=1;
 #
 
 
-#set environment variables
 chdir "/opt/zfin/www_homes/cell/server_apps/data_transfer/SWISS-PROT/";
 
-
-my $dbname = "celldb";
-my $dbhost = "localhost";
-my $username = "";
-my $password = "";
-
-
-print "Reading pre_zfin.dat and generating metrics.txt\n";
-
-my $cur;
+print STDERR "Reading pre_zfin.dat and generating metrics.txt\n";
 
 $/ = "//\n";
 open(PREDAT, "pre_zfin.dat") || die("Could not open pre_zfin.dat !");
@@ -38,33 +28,16 @@ my @blocks = <PREDAT>;
 close(PREDAT);
 print STDERR "Processing pre_zfin.dat\n";
 
-my $totalOnZfinDat = 0;
-my $totalOnDeleted = 0;
-my $ttt = 0;
-my @lines = ();
-my %toNewInput = ();
-my %deletes = ();
-my $ct = 0;
-my %ZDBgeneIDgeneAbbrevs = ();
-my $line;
-my $lineKey = 0;
-my @fields = ();
-my $ZFINgeneId;
-my $geneAbbrev;
-my $block;
-my $newLineNumber;
-my $key;
 my $has_rna = 0;
 my $has_seq = 0;
 
 print "ID,has_rna,has_seq\n";
-foreach $block (@blocks) {
-   $ttt++;
+foreach my $block (@blocks) {
    $has_rna = "0";
    $has_seq = "0";
    if($block =~ m/^DR.*EMBL.*RNA/m) {
 	$has_rna = "1";
-   } 
+   }
    if($block =~ m/^DR   RefSeq/m) {
 	$has_seq = "1";
    }
@@ -74,4 +47,3 @@ foreach $block (@blocks) {
      print "No ID?\n";
    }
 }
-
