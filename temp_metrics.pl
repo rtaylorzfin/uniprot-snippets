@@ -1,14 +1,6 @@
 #!/opt/zfin/bin/perl
 use strict ;
 
-use MIME::Lite;
-use LWP::Simple;
-use DBI;
-use lib "/opt/zfin/www_homes/cell/server_apps/";
-use ZFINPerlModules;
-use Try::Tiny;
-use POSIX;
-
 #------------------- Flush Output Buffer --------------
 $|=1;
 
