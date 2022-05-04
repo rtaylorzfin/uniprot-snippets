@@ -1,41 +1,34 @@
 #!/opt/zfin/bin/perl
 use strict;
 
-#------------------- Flush Output Buffer --------------
-$| = 1;
-
-#=======================================================
-#
-#   Main
-#
-chdir "/opt/zfin/www_homes/cell/server_apps/data_transfer/SWISS-PROT/";
-print STDERR "Reading okfile and generating metrics.txt\n";
-
 $/ = "//\n";
-open(INPUTFILE, "okfile") || die("Could not open okfile !");
-my @blocks = <INPUTFILE>;
-close(INPUTFILE);
-print STDERR "Processing okfile\n";
-
-my $zfin_count = 0;
-
-print "ID,zfin_count\n";
+open(PREDAT, "pre_zfin.dat") || die("Could not open pre_zfin.dat !");
+my @blocks = <PREDAT>;
+close(PREDAT);
+print STDERR "Processing pre_zfin.dat\n";
+my $prezfin = 0;
 foreach my $block (@blocks) {
-    $zfin_count = 0;
-    my @lines = split("\n", $block);
+    my $zfinDRs = 0;
+    my $zfinLines = "";
+    my @lines = split(/\n/, $block);
+    my $id = "NONE";
     foreach my $line (@lines) {
-        if ($line =~ m/^DR   ZFIN/) {
-            $zfin_count++;
+        if ($line =~ m/^ID   (.*?)\s/) {
+            $id = $1;
+        }
+        if ($line =~ m/DR   ZFIN; (ZDB-GENE-.*); (.*)\./) {
+            $zfinDRs++;
+            $zfinLines .= "," . $1;
         }
     }
-    my $id = "";
-    if ($block =~ m/^ID   (.*?)\s/) {
-        $id = $1;
+    if ($zfinDRs > 1) {
+        # print "Multiple ZFIN recs\n";
+        # print "$prezfin\n";
+        print "$id" . "$zfinLines\n";
     }
-    else {
-        print "No ID?\n";
-    }
-    if ($zfin_count > 1) {
-        print "$id has more than one ZFIN id\n";
+    if ($block =~ m/OS   Danio rerio/) {
+        $prezfin++;
     }
 }
+
+print $prezfin;
